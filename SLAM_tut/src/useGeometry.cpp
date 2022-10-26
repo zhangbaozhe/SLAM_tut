@@ -1,9 +1,11 @@
 //
 // Created by 张宝哲 on 9/26/22.
 //
-
-#include <iostream>
+#ifdef WIN32
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
+#include <iostream>
 using namespace std;
 
 #include <Eigen/Core>

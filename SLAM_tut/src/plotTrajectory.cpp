@@ -1,6 +1,7 @@
 #include <pangolin/pangolin.h>
 #include <Eigen/Core>
-#include <unistd.h>
+#include <thread>
+#include <chrono>
 
 // 本例演示了如何画出一个预先存储的轨迹
 
@@ -8,13 +9,13 @@ using namespace std;
 using namespace Eigen;
 
 // path to trajectory file
-string trajectory_file = "./examples/trajectory.txt";
+string trajectory_file = "SLAM_tut/utility/ch3_trajectory.txt";
 
-void DrawTrajectory(vector<Isometry3d, Eigen::aligned_allocator<Isometry3d>>);
+void DrawTrajectory(const vector<Isometry3d> &);
 
 int main(int argc, char **argv) {
 
-  vector<Isometry3d, Eigen::aligned_allocator<Isometry3d>> poses;
+  vector<Isometry3d> poses;
   ifstream fin(trajectory_file);
   if (!fin) {
     cout << "cannot find trajectory file at " << trajectory_file << endl;
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
 }
 
 /*******************************************************************************************/
-void DrawTrajectory(vector<Isometry3d, Eigen::aligned_allocator<Isometry3d>> poses) {
+void DrawTrajectory(const vector<Isometry3d> &poses) {
   // create pangolin window and plot the trajectory
   pangolin::CreateWindowAndBind("Trajectory Viewer", 1024, 768);
   glEnable(GL_DEPTH_TEST);
@@ -76,7 +77,7 @@ void DrawTrajectory(vector<Isometry3d, Eigen::aligned_allocator<Isometry3d>> pos
       glEnd();
     }
     // 画出连线
-    for (size_t i = 0; i < poses.size(); i++) {
+    for (size_t i = 0; i < poses.size() - 1; i++) {
       glColor3f(0.0, 0.0, 0.0);
       glBegin(GL_LINES);
       auto p1 = poses[i], p2 = poses[i + 1];
@@ -85,6 +86,6 @@ void DrawTrajectory(vector<Isometry3d, Eigen::aligned_allocator<Isometry3d>> pos
       glEnd();
     }
     pangolin::FinishFrame();
-    usleep(5000);   // sleep 5 ms
+    std::this_thread::sleep_for(std::chrono::microseconds(5000));
   }
 }
